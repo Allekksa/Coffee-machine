@@ -38,6 +38,7 @@
 
 .coffee-cup img {
   width: 100%;
+  opacity: 0;
 }
 
 .atm img {
