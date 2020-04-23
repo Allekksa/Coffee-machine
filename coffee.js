@@ -3,14 +3,15 @@
 let state ="waiting";
 let cupImg = document.querySelector('.coffee-cup img');
 let progressBar = document.querySelector('.progress-bar');
+let balanceInput = document.querySelector("input[placeholder='Баланс']");
+
 cupImg.onclick = takeCoffee;
 
 function buyCoffee(name, price, element) {
   if (state != "waiting") {
     return;//если машина не в ожидании, то новую кружку купить нельзя
   }
-    let balanceInput = document.querySelector("input[placeholder='Баланс']");
-    
+
  if (+balanceInput.value < price) {
    changeDisplayText('Недостаточно средств!');
    balanceInput.style.border = "2px solid red";
@@ -96,7 +97,11 @@ window.onmousemove = function(event) {//отлавливает курсор по
     
     bill.onmouseup = function() {
       window.onmousemove = null;// отжать мышь - купюра остается на месте
-      console.log( inAtm(bill) );
+      if ( inAtm(bill) ) {
+      let billCost = +bill.getAttribute('cost');
+      balanceInput.value = +balanceInput.value + billCost;
+      bill.remove();
+      }
       
     }
 }
@@ -129,13 +134,57 @@ if (billLeftTopCorner.x > atmLeftTopCorner.x
 }
 
 
+//-------------Сдача-------------
 
 
+let changeButton = document.querySelector(".change-btn");
+/* changeButton.onclick = function () {
+  takeChange();
+} */
 
+changeButton.onclick = takeChange;
 
+function takeChange() {
+tossCoin("10"); //именно строкой, не числом
 
+/*changeBox.innerHTML += `
+ <img src="img/10rub.png" class="coin">
+ `*внутреннее содержимое то что внутри тега inner HTML меняет в html внутреннее значение*/
+//в обратные ковычки можно вписывать переменные через $ и они позволяют делать перенос
 
+}
 
+function tossCoin(cost) {
+  let changeBox = document.querySelector(".change-box");
+  changeBox.style.position = "relative";
+  let changeBoxCoords = changeBox.getBoundingClientRect();
+  let randomWidth = getRandomInt(0,  changeBoxCoords.width - 50);
+  let randomHeight = getRandomInt(0, changeBoxCoords.height - 50);
+  
+  let coin = document.createElement("img");// создает в html элемент по тегу и далее задали свойства элименту
 
+  coin.setAttribute("src", "img/10rub.png");
+  coin.style.width = "50px";
+  coin.style.height = "50px";
+  coin.style.position = "absolute";
+  coin.style.top = randomHeight + 'px'; 
+  coin.style.left = randomWidth +'px';
+  
+  changeBox.append(coin);
+  
+/*   */
+  //append добовляет элемент в конец, в скобках указываем какой
+/*  changeBox.before(coin)//перед 
+  changeBox.after(coin) //после ;*/
+  //changeBox.prepend(coin); добавляет вначало,
+  }
+/*  
+changeBox.replaceWith(coin)// заменяет элемент, делает 1 раз, т.к. потом не станет changebox
+*/
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min; //Максимум не включается, минимум включается
+}
 
