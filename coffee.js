@@ -142,36 +142,95 @@ let changeButton = document.querySelector(".change-btn");
   takeChange();
 } */
 
-changeButton.onclick = takeChange;
-
+changeButton.onclick = function () {
+  let changeBox = document.querySelector(".change-box");
+  let coins = changeBox.querySelectorAll("img");
+  if (coins.length == 0) {
+     if(balanceInput.value == 0) {
+    return;
+     }
+    changeButton.innerHTML = "Забрать сдачу";
+    takeChange();
+  } else {
+ changeButton.innerHTML = "Сдача";
+ for (let i = 0; i < coins.length; i++) {
+    coins[i].remove();
+    }
+  }
+}
 function takeChange() {
-tossCoin("10"); //именно строкой, не числом
+  if(balanceInput.value == 0) {
+    return;
+  } 
+  if (balanceInput.value >=10) {
+    balanceInput.value -=10;
+    tossCoin("10"); //именно строкой, не числом
+    takeChange();
+  } else if (balanceInput.value >=5) {
+    balanceInput.value -=5;
+    tossCoin("5"); 
+    takeChange();
+  }else if (balanceInput.value >=2) {
+    balanceInput.value -=2;
+    tossCoin("2"); 
+    takeChange();
+  } else {
+    balanceInput.value -=1;
+    tossCoin("1"); 
+    takeChange();
+  }
+}
 
 /*changeBox.innerHTML += `
  <img src="img/10rub.png" class="coin">
  `*внутреннее содержимое то что внутри тега inner HTML меняет в html внутреннее значение*/
 //в обратные ковычки можно вписывать переменные через $ и они позволяют делать перенос
 
-}
+
 
 function tossCoin(cost) {
+  let imgSrc = "";
+  switch (cost) {
+    case '10':
+      imgSrc = "img/10rub.png";
+      break;
+    case '5':
+      imgSrc = "img/5rub.png";
+      break;
+    case '2':
+      imgSrc = "img/2rub.png";
+      break;
+    case '1':
+      imgSrc = "img/1rub.png";
+      break;//switch case используем чтобы упростить запись и не использовать множественное  if else
+
+  }
+  
+  
+  
+  
+  
   let changeBox = document.querySelector(".change-box");
   changeBox.style.position = "relative";
+  
   let changeBoxCoords = changeBox.getBoundingClientRect();
   let randomWidth = getRandomInt(0,  changeBoxCoords.width - 50);
   let randomHeight = getRandomInt(0, changeBoxCoords.height - 50);
   
   let coin = document.createElement("img");// создает в html элемент по тегу и далее задали свойства элименту
 
-  coin.setAttribute("src", "img/10rub.png");
+  coin.setAttribute("src", imgSrc);
   coin.style.width = "50px";
   coin.style.height = "50px";
+  coin.style.cursor = "pointer";
   coin.style.position = "absolute";
   coin.style.top = randomHeight + 'px'; 
   coin.style.left = randomWidth +'px';
-  
   changeBox.append(coin);
   
+  coin.onclick = function() {//проверить сколько монеток остается в контейнере когда надпить 0 то нужно сменить название
+    coin.remove()
+  }
 /*   */
   //append добовляет элемент в конец, в скобках указываем какой
 /*  changeBox.before(coin)//перед 
@@ -188,3 +247,11 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min; //Максимум не включается, минимум включается
 }
 
+
+
+
+
+
+/*changeBox.innerHTML = `
+<img src="img/10rub.png" style="width:50px; height: 50px; position: absolute; top: ${randomHeight}px; left: ${randomWidth}px">
+`;*/
